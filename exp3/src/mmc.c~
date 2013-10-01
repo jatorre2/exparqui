@@ -584,7 +584,7 @@ send_cmd ( /* Returns command response (bit7==1:Send failed) */
     // b) or, it was just inserted recently, and needs to be initialized
     INS = 0x01;		// Trick disk_initialize into thinking it's inserted...
   disk_initialize (0);		// Attempt to initialize it
-  INS = validateCSD (csd);	// Try again
+  INS = validateCSD ();	// Try again
   disk_status (0);		// Update the INS variable
   return INS;			// 1 = card is present; 0 = not present
 }

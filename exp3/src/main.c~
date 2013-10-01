@@ -11,6 +11,10 @@
 #include "timer.h"
 #include "button.h"
 #include "adc.h"
+#include "ff.h"
+#include "HAL_SDCard.h"
+#include "mmc.h"
+#include "integer.h"
 
 void init() {
 	WDTCTL = WDTPW + WDTHOLD;
@@ -83,22 +87,44 @@ void app_run2() {
 }
 
 
+void app_runCSD(){
+  LCD_clear();
+  BYTE csd[16];
+  if(detectCard(csd)){
+   LCD_printf("Tarjeta detectada\n");
+    for(uint8_t i=0;i<16;i++)
+    LCD_printf("%02x",csd[i]);
+    
+    /*
+    if(version == 0){
+      LCD_printf("Version de la tarjeta: 1.0");
+
+    }
+    else{
+      LCD_printf("Version de la tarjeta: 2.0");
+    }*/
+
+  }
+  else{//Fail
+	LCD_printf("Fail");
+  }
+}
+
 
 int main (void)
 {
 	init();
 	led_init();
-	timer_init();
-	timer_start();
- 	pot_init();
-    	adc_init();
-	LCD_clear();
-	//app_run1();
+	SDCard_init();
+	//timer_init();
+	//timer_start();
+ 	//pot_init();
+    	//adc_init();
+	//LCD_clear();
+	app_runCSD();
+	_NOP();
 	
-	app_run2();
-
-	
-
+	while(1);
 
 	return 0;
 }
