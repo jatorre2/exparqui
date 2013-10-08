@@ -86,15 +86,6 @@ void app_run2() {
    }
 }
 
-typedef struct csd_bf_t {
-
-    uint32_t : 24;
-    uint16_t TRAN_SPEED : 8;
-    uint32_t : 32;
-    uint32_t : 32;
-    uint32_t : 32;
-
-} csd_bf;
 
 void app_runCSD(){
   LCD_clear();
@@ -102,11 +93,23 @@ void app_runCSD(){
   if(detectCard(csd)){
    LCD_printf("Tarjeta detectada\n");
     for(uint8_t i=0;i<16;i++)
-    LCD_printf("%02x-",csd[i]);
+      LCD_printf("%02x-",csd[i]);
+
+    for(uint8_t i=0; i<8;i++){
+      BYTE swap = csd[15-i];
+      csd[15-i] = csd[i];
+      csd[i] = swap;
+    }
 
     csd_bf a;
     memcpy(&a,csd,16);
-    LCD_printf("%02x",a.TRAN_SPEED);
+
+
+    uint64_t size_mmc = (uint64_t)(a.C_SIZE+1);
+    uint64_t multiplier = (uint64_t)1<<(uint64_t)(a.C_SIZE_MULT+2+a.READ_BL_LEN);
+    size_mmc*=multiplier;
+
+    LCD_printf("\n\rTamano: \n\r%llu",size_mmc);
     /*
     if(version == 0){
       LCD_printf("Version de la tarjeta: 1.0");

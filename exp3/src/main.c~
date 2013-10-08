@@ -34,7 +34,7 @@ void app_run1() {
 	uint32_t percentage = (uint32_t)TA0CCR0*100;
 	percentage/=(uint32_t)0x0FFF;
 	LCD_printf("\rT: %04d (%03u%)",TA0CCR0, percentage);
-	while(1){	
+	while(1){
 	  if(flag1 && flag2){
 	    if(is_in_LPM0){
 		_NOP();
@@ -93,8 +93,23 @@ void app_runCSD(){
   if(detectCard(csd)){
    LCD_printf("Tarjeta detectada\n");
     for(uint8_t i=0;i<16;i++)
-    LCD_printf("%02x",csd[i]);
-    
+      LCD_printf("%02x-",csd[i]);
+
+    for(uint8_t i=0; i<8;i++){
+      BYTE swap = csd[15-i];
+      csd[15-i] = csd[i];
+      csd[i] = swap;
+    }
+
+    csd_bf a;
+    memcpy(&a,csd,16);
+
+
+    uint64_t size_mmc = (uint64_t)(a.C_SIZE+1);
+    uint64_t multiplier = (uint64_t)(1<<(uint64_t)(a.C_SIZE_MULT+2+a.READ_BL_LEN));
+    size_mmc*=multiplier;
+
+    LCD_printf("\n\rTamano: \n\r%lu",size_mmc);
     /*
     if(version == 0){
       LCD_printf("Version de la tarjeta: 1.0");
@@ -123,7 +138,7 @@ int main (void)
 	//LCD_clear();
 	app_runCSD();
 	_NOP();
-	
+
 	while(1);
 
 	return 0;
