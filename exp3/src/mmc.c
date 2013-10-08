@@ -9,38 +9,39 @@
 /   personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
 / * Redistributions of source code must retain the above copyright notice.
 /
----------------------------------------------------------------------------*/ 
-  
-  
+---------------------------------------------------------------------------*/
+
+
 #include <intrinsics.h>         /* Include MSP430-specific intrincs */
 #include "diskio.h"             /* Common include file for FatFs and disk I/O layer */
 #include "HAL_SDCard.h"         /* MSP-EXP430F5529 specific SD Card driver */
-  
-/*-------------------------------------------------------------------------*/ 
-/* Platform dependent macros and functions needed to be modified           */ 
-/*-------------------------------------------------------------------------*/ 
-  
+#include <string.h>
+
+/*-------------------------------------------------------------------------*/
+/* Platform dependent macros and functions needed to be modified           */
+/*-------------------------------------------------------------------------*/
+
 // CPU Frequency.
 #define MCLK_FREQ   25000000
 #define	INIT_PORT()     SDCard_init()       /* Initialize MMC control port */
 #define FAST_MODE()     SDCard_fastMode()   /* Maximize SD Card transfer speed */
 #define DLY_US(n)       __delay_cycles(n * (MCLK_FREQ/1000000))	// Delay n microseconds           // KLQ
-  
+
 #define	CS_H()          SDCard_setCSHigh()  /* Set MMC CS "high" */
 #define CS_L()          SDCard_setCSLow()   /* Set MMC CS "low" */
   BYTE INS = 1;		// KLQ
 #define	WP              (0)                 /* Card is write protected (yes:true, no:false, default:false) */
 
-/*-------------------------------------------------------------------------*/ 
-/* Platform dependent RTC Function for FatFs module                        */ 
-/*-------------------------------------------------------------------------*/ 
-  DWORD get_fattime (void) 
+/*-------------------------------------------------------------------------*/
+/* Platform dependent RTC Function for FatFs module                        */
+/*-------------------------------------------------------------------------*/
+  DWORD get_fattime (void)
 {
   DWORD tmr;
-  
+
     // TODO: Customize to use the MSP430 RTC
-    
-    /* Pack date and time into a DWORD variable */ 
+
+    /* Pack date and time into a DWORD variable */
     tmr = (((DWORD) 2011 - 60) << 25)	// rtcYear
     | ((DWORD) 9 << 21)		// rtcMon
     | ((DWORD) 11 << 16)	// rtcMday
@@ -53,9 +54,9 @@
 
 /*--------------------------------------------------------------------------
    Module Private Functions
----------------------------------------------------------------------------*/ 
-  
-/* MMC/SD command (SPI mode) */ 
+---------------------------------------------------------------------------*/
+
+/* MMC/SD command (SPI mode) */
 #define CMD0	(0)			/* GO_IDLE_STATE */
 #define CMD1	(1)			/* SEND_OP_COND */
 #define	ACMD41	(0x80+41)	/* SEND_OP_COND (SDC) */
@@ -74,8 +75,8 @@
 #define CMD41	(41)		/* SEND_OP_COND (ACMD) */
 #define CMD55	(55)		/* APP_CMD */
 #define CMD58	(58)		/* READ_OCR */
-  
-/* Card type flags (CardType) */ 
+
+/* Card type flags (CardType) */
 #define CT_MMC		0x01		/* MMC ver 3 */
 #define CT_SD1		0x02		/* SD ver 1 */
 #define CT_SD2		0x04		/* SD ver 2 */
@@ -84,33 +85,33 @@
 static DSTATUS Stat = STA_NOINIT;	/* Disk status */
 static BYTE CardType;	/* b0:MMC, b1:SDv1, b2:SDv2, b3:Block addressing */
 
-/*-----------------------------------------------------------------------*/ 
-/* Transmit bytes to the MMC                                             */ 
-/*-----------------------------------------------------------------------*/ 
+/*-----------------------------------------------------------------------*/
+/* Transmit bytes to the MMC                                             */
+/*-----------------------------------------------------------------------*/
 static void
-xmit_mmc (const BYTE * buff, /* Data to be sent */ 
-	  UINT bc /* Number of bytes to send */  
-  ) 
+xmit_mmc (const BYTE * buff, /* Data to be sent */
+	  UINT bc /* Number of bytes to send */
+  )
 {
   SDCard_sendFrame ((uint8_t *) buff, bc);
-} 
+}
 
-/*-----------------------------------------------------------------------*/ 
-/* Receive bytes from the MMC                                            */ 
-/*-----------------------------------------------------------------------*/ 
+/*-----------------------------------------------------------------------*/
+/* Receive bytes from the MMC                                            */
+/*-----------------------------------------------------------------------*/
 static void
-rcvr_mmc (BYTE * buff, /* Pointer to read buffer */ 
-	  UINT bc /* Number of bytes to receive */  
-  ) 
+rcvr_mmc (BYTE * buff, /* Pointer to read buffer */
+	  UINT bc /* Number of bytes to receive */
+  )
 {
   SDCard_readFrame (buff, bc);
-} 
+}
 
-/*-----------------------------------------------------------------------*/ 
-/* Wait for card ready                                                   */ 
-/*-----------------------------------------------------------------------*/ 
+/*-----------------------------------------------------------------------*/
+/* Wait for card ready                                                   */
+/*-----------------------------------------------------------------------*/
 static int
-wait_ready (void) /* 1:OK, 0:Timeout */  
+wait_ready (void) /* 1:OK, 0:Timeout */
 {
   BYTE d;
   UINT tmr;
@@ -125,22 +126,22 @@ wait_ready (void) /* 1:OK, 0:Timeout */
 }
 
 
-/*-----------------------------------------------------------------------*/ 
-/* Deselect the card and release SPI bus                                 */ 
-/*-----------------------------------------------------------------------*/ 
+/*-----------------------------------------------------------------------*/
+/* Deselect the card and release SPI bus                                 */
+/*-----------------------------------------------------------------------*/
 static void
-deselect (void) 
+deselect (void)
 {
   BYTE d;
   CS_H ();
   rcvr_mmc (&d, 1);
-} 
+}
 
-/*-----------------------------------------------------------------------*/ 
-/* Select the card and wait for ready                                    */ 
-/*-----------------------------------------------------------------------*/ 
+/*-----------------------------------------------------------------------*/
+/* Select the card and wait for ready                                    */
+/*-----------------------------------------------------------------------*/
 static int
-select (void) /* 1:OK, 0:Timeout */  
+select (void) /* 1:OK, 0:Timeout */
 {
   CS_L ();
   if (!wait_ready ())
@@ -152,14 +153,14 @@ select (void) /* 1:OK, 0:Timeout */
 }
 
 
-/*-----------------------------------------------------------------------*/ 
-/* Receive a data packet from MMC                                        */ 
-/*-----------------------------------------------------------------------*/ 
+/*-----------------------------------------------------------------------*/
+/* Receive a data packet from MMC                                        */
+/*-----------------------------------------------------------------------*/
 static int
-rcvr_datablock ( /* 1:OK, 0:Failed */ 
-		BYTE * buff, /* Data buffer to store received data */ 
-		UINT btr /* Byte count */  
-  ) 
+rcvr_datablock ( /* 1:OK, 0:Failed */
+		BYTE * buff, /* Data buffer to store received data */
+		UINT btr /* Byte count */
+  )
 {
   BYTE d[2];
   UINT tmr;
@@ -178,14 +179,14 @@ rcvr_datablock ( /* 1:OK, 0:Failed */
 }
 
 
-/*-----------------------------------------------------------------------*/ 
-/* Send a data packet to MMC                                             */ 
-/*-----------------------------------------------------------------------*/ 
+/*-----------------------------------------------------------------------*/
+/* Send a data packet to MMC                                             */
+/*-----------------------------------------------------------------------*/
 static int
-xmit_datablock ( /* 1:OK, 0:Failed */ 
-		const BYTE * buff, /* 512 byte data block to be transmitted */ 
-		BYTE token /* Data/Stop token */  
-  ) 
+xmit_datablock ( /* 1:OK, 0:Failed */
+		const BYTE * buff, /* 512 byte data block to be transmitted */
+		BYTE token /* Data/Stop token */
+  )
 {
   BYTE d[2];
   if (!wait_ready ())
@@ -204,14 +205,14 @@ xmit_datablock ( /* 1:OK, 0:Failed */
 }
 
 
-/*-----------------------------------------------------------------------*/ 
-/* Send a command packet to MMC                                          */ 
-/*-----------------------------------------------------------------------*/ 
+/*-----------------------------------------------------------------------*/
+/* Send a command packet to MMC                                          */
+/*-----------------------------------------------------------------------*/
 BYTE
-send_cmd ( /* Returns command response (bit7==1:Send failed) */ 
-	  BYTE cmd, /* Command byte */ 
-	  DWORD arg /* Argument */  
-  ) 
+send_cmd ( /* Returns command response (bit7==1:Send failed) */
+	  BYTE cmd, /* Command byte */
+	  DWORD arg /* Argument */
+  )
 {
   BYTE n, d, buf[6];
   if (cmd & 0x80)
@@ -221,13 +222,13 @@ send_cmd ( /* Returns command response (bit7==1:Send failed) */
       if (n > 1)
 	return n;
     }
-  
-    /* Select the card and wait for ready */ 
+
+    /* Select the card and wait for ready */
     deselect ();
   if (!select ())
     return 0xFF;
-  
-    /* Send a command packet */ 
+
+    /* Send a command packet */
     buf[0] = 0x40 | cmd;	/* Start + Command index */
   buf[1] = (BYTE) (arg >> 24);	/* Argument[31..24] */
   buf[2] = (BYTE) (arg >> 16);	/* Argument[23..16] */
@@ -240,12 +241,12 @@ send_cmd ( /* Returns command response (bit7==1:Send failed) */
     n = 0x87;			/* (valid CRC for CMD8(0x1AA)) */
   buf[5] = n;
   xmit_mmc (buf, 6);
-  
-    /* Receive command response */ 
+
+    /* Receive command response */
     if (cmd == CMD12)
     rcvr_mmc (&d, 1);		/* Skip a stuff byte when stop reading */
   n = 10;			/* Wait for a valid response in timeout of 10 attempts */
-  
+
   do
     rcvr_mmc (&d, 1);
   while ((d & 0x80) && --n);
@@ -257,13 +258,13 @@ send_cmd ( /* Returns command response (bit7==1:Send failed) */
 
    Public Functions
 
----------------------------------------------------------------------------*/ 
-  
-/*-----------------------------------------------------------------------*/ 
-/* Get Disk Status                                                       */ 
-/*-----------------------------------------------------------------------*/ 
-  DSTATUS disk_status (BYTE drv /* Drive number (0) */  
-  ) 
+---------------------------------------------------------------------------*/
+
+/*-----------------------------------------------------------------------*/
+/* Get Disk Status                                                       */
+/*-----------------------------------------------------------------------*/
+  DSTATUS disk_status (BYTE drv /* Drive number (0) */
+  )
 {
   DSTATUS s = Stat;
   if (drv || !INS)
@@ -275,7 +276,7 @@ send_cmd ( /* Returns command response (bit7==1:Send failed) */
       s &= ~STA_NODISK;
       if (WP)
 	s |= STA_PROTECT;
-      
+
       else
 	s &= ~STA_PROTECT;
     }
@@ -284,15 +285,15 @@ send_cmd ( /* Returns command response (bit7==1:Send failed) */
 }
 
 
-/*-----------------------------------------------------------------------*/ 
-/* Initialize Disk Drive                                                 */ 
-/*-----------------------------------------------------------------------*/ 
-  DSTATUS disk_initialize (BYTE drv /* Physical drive nmuber (0) */  
-  ) 
+/*-----------------------------------------------------------------------*/
+/* Initialize Disk Drive                                                 */
+/*-----------------------------------------------------------------------*/
+  DSTATUS disk_initialize (BYTE drv /* Physical drive nmuber (0) */
+  )
 {
-  
+
 /* TI: Inserted pragma to supress IAR compiler warning incicating 'cmd'
- * is not used. If removed however the compile fails */ 
+ * is not used. If removed however the compile fails */
 #ifdef __IAR_SYSTEMS_ICC__
 #pragma diag_suppress=Pe550
 #endif	/*  */
@@ -300,7 +301,7 @@ send_cmd ( /* Returns command response (bit7==1:Send failed) */
 #pragma diag_suppress 552
 #endif	/*  */
     BYTE n, ty, cmd, buf[4];
-  
+
 #ifdef __IAR_SYSTEMS_ICC__
 #pragma diag_default=Pe550
 #endif	/*  */
@@ -367,7 +368,7 @@ send_cmd ( /* Returns command response (bit7==1:Send failed) */
       FAST_MODE ();
       s &= ~STA_NOINIT;
     }
-  
+
   else
     {				/* Initialization failed */
       s |= STA_NOINIT;
@@ -377,14 +378,14 @@ send_cmd ( /* Returns command response (bit7==1:Send failed) */
 }
 
 
-/*-----------------------------------------------------------------------*/ 
-/* Read Sector(s)                                                        */ 
-/*-----------------------------------------------------------------------*/ 
-  DRESULT disk_read (BYTE drv, /* Physical drive nmuber (0) */ 
-		      BYTE * buff, /* Pointer to the data buffer to store read data */ 
-		      DWORD sector, /* Start sector number (LBA) */ 
-		      BYTE count /* Sector count (1..128) */  
-  ) 
+/*-----------------------------------------------------------------------*/
+/* Read Sector(s)                                                        */
+/*-----------------------------------------------------------------------*/
+  DRESULT disk_read (BYTE drv, /* Physical drive nmuber (0) */
+		      BYTE * buff, /* Pointer to the data buffer to store read data */
+		      DWORD sector, /* Start sector number (LBA) */
+		      BYTE count /* Sector count (1..128) */
+  )
 {
   DSTATUS s;
   s = disk_status (drv);
@@ -396,16 +397,16 @@ send_cmd ( /* Returns command response (bit7==1:Send failed) */
     sector *= 512;		/* Convert LBA to byte address if needed */
   if (count == 1)
     {				/* Single block read */
-      if ((send_cmd (CMD17, sector) == 0) /* READ_SINGLE_BLOCK */  
+      if ((send_cmd (CMD17, sector) == 0) /* READ_SINGLE_BLOCK */
 	   &&rcvr_datablock (buff, 512))
 	count = 0;
     }
-  
+
   else
     {				/* Multiple block read */
       if (send_cmd (CMD18, sector) == 0)
 	{			/* READ_MULTIPLE_BLOCK */
-	  
+
 	  do
 	    {
 	      if (!rcvr_datablock (buff, 512))
@@ -421,14 +422,14 @@ send_cmd ( /* Returns command response (bit7==1:Send failed) */
 }
 
 
-/*-----------------------------------------------------------------------*/ 
-/* Write Sector(s)                                                       */ 
-/*-----------------------------------------------------------------------*/ 
-  DRESULT disk_write (BYTE drv, /* Physical drive nmuber (0) */ 
-		       const BYTE * buff, /* Pointer to the data to be written */ 
-		       DWORD sector, /* Start sector number (LBA) */ 
-		       BYTE count /* Sector count (1..128) */  
-  ) 
+/*-----------------------------------------------------------------------*/
+/* Write Sector(s)                                                       */
+/*-----------------------------------------------------------------------*/
+  DRESULT disk_write (BYTE drv, /* Physical drive nmuber (0) */
+		       const BYTE * buff, /* Pointer to the data to be written */
+		       DWORD sector, /* Start sector number (LBA) */
+		       BYTE count /* Sector count (1..128) */
+  )
 {
   DSTATUS s;
   s = disk_status (drv);
@@ -442,18 +443,18 @@ send_cmd ( /* Returns command response (bit7==1:Send failed) */
     sector *= 512;		/* Convert LBA to byte address if needed */
   if (count == 1)
     {				/* Single block write */
-      if ((send_cmd (CMD24, sector) == 0) /* WRITE_BLOCK */  
+      if ((send_cmd (CMD24, sector) == 0) /* WRITE_BLOCK */
 	   &&xmit_datablock (buff, 0xFE))
 	count = 0;
     }
-  
+
   else
     {				/* Multiple block write */
       if (CardType & CT_SDC)
 	send_cmd (ACMD23, count);
       if (send_cmd (CMD25, sector) == 0)
 	{			/* WRITE_MULTIPLE_BLOCK */
-	  
+
 	  do
 	    {
 	      if (!xmit_datablock (buff, 0xFC))
@@ -470,13 +471,13 @@ send_cmd ( /* Returns command response (bit7==1:Send failed) */
 }
 
 
-/*-----------------------------------------------------------------------*/ 
-/* Miscellaneous Functions                                               */ 
-/*-----------------------------------------------------------------------*/ 
-  DRESULT disk_ioctl (BYTE drv, /* Physical drive nmuber (0) */ 
-		       BYTE ctrl, /* Control code */ 
-		       void *buff /* Buffer to send/receive control data */  
-  ) 
+/*-----------------------------------------------------------------------*/
+/* Miscellaneous Functions                                               */
+/*-----------------------------------------------------------------------*/
+  DRESULT disk_ioctl (BYTE drv, /* Physical drive nmuber (0) */
+		       BYTE ctrl, /* Control code */
+		       void *buff /* Buffer to send/receive control data */
+  )
 {
   DRESULT res;
   BYTE n, csd[16];
@@ -527,31 +528,31 @@ send_cmd ( /* Returns command response (bit7==1:Send failed) */
 
 
 // KLQ
-  uint8_t validateCSD (BYTE *csd) 
+  uint8_t validateCSD (BYTE *csd)
 {
   BYTE csd0[16], csd1[16], i;
   WORD sum = 0;
-  
+
     // Pull the CSD -- twice.  If the response codes are invalid, then we know the card isn't there or initialized.
     if ((send_cmd (CMD9, 0) == 0) && rcvr_datablock (csd0, 16))
     if ((send_cmd (CMD9, 0) == 0) && rcvr_datablock (csd1, 16))
-      
+
       {
-	csd = csd0;
-	
+
+    memcpy(csd,csd0,16);
 	  // The response codes were good -- but maybe the SPI input was just floating low.  Let's evaluate the CSD data.
 	  // First, look for all zero or all ones.  If the SPI input is floating, these are the most likely outcomes.
 	  for (i = 0; i <= 15; i++)
 	  sum += csd0[i];
 	if (!((sum == 0) || (sum == 4096)))
-	  
+
 	  {
-	    
+
 	      // The response was a mix of 0's and 1's.  Floating inputs could still do that -- but it's unlikely they'd
 	      // produce the same pattern twice.  Compare to ensure the two are identical.
 	      i = 0;
 	    while (i <= 15)
-	      
+
 	      {
 		if (csd0[i] != csd1[i])
 		  break;
@@ -568,17 +569,17 @@ send_cmd ( /* Returns command response (bit7==1:Send failed) */
 // result, and also updates FatFs's internal INS variable.
 // The proper way to detect a card is by sensing its presence on the DAT3 signal.  The EXP board doesn't
 // contain the necessary h/w, so this s/w method works instead.
-  uint8_t detectCard (BYTE * csd) 
+  uint8_t detectCard (BYTE * csd)
 {
-  
+
     // Check for a valid CSD response
     if (validateCSD (csd))
-    
+
     {
       disk_status (0);		// Update the INS variable
       return 1;			// Card is present
     }
-  
+
     // We didn't get a valid response.  So we now know the status is one of two things:
     // a) The card isn't there at all;
     // b) or, it was just inserted recently, and needs to be initialized
