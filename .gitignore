@@ -1,3 +1,4 @@
 *.elf
 *.iext
 *.obj
+*.ihex
