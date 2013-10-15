@@ -26,65 +26,8 @@ void init() {
 	__enable_interrupt();
 }
 
-extern volatile uint8_t flag1,flag2, is_in_LPM0, state_led;
-
-void app_run1() {
-	button_init();
-	//LCD_reset_address();
-	uint32_t percentage = (uint32_t)TA0CCR0*100;
-	percentage/=(uint32_t)0x0FFF;
-	LCD_printf("\rT: %04d (%03u%)",TA0CCR0, percentage);
-	while(1){
-	  if(flag1 && flag2){
-	    if(is_in_LPM0){
-		_NOP();
-		LPM0;
-	    }
-	  }
-	  else if(flag1){
-		  //LCD_cleanpage(0);
-		  //LCD_reset_address();
-		  uint32_t percentage = (uint32_t)TA0CCR0*100;
-		  percentage/=(uint32_t)0x0FFF;
-		  LCD_printf("\rT: %04d (%03u%)",TA0CCR0, percentage);
-	  }
 
 
-	}
-
-
-}
-
-void app_run2() {
-   adc_start();
-   uint16_t newv = 1;
-   uint16_t oldv = 0;
-   uint16_t total = 0;
-   uint8_t c = 0; //Contador de muestras tomadas
-   uint8_t n = 5; //Numero de muestras a promediar
-   while(1) {
-       while(adc_busy()) {
-       //LCD_printf(".");
-       }
-       //LCD_printf("wena");
-       total += ADC12MEM0;
-       c++;
-       if(c >= n) {
-        c = 0;
-        newv = total / n;
-        total= 0;
-        if(newv != oldv) {
-            oldv = newv;
-            uint32_t per = (uint32_t)newv*100;
-	    per/=(uint32_t)4095;
-
-            LCD_printf("\rT: %04d (%03u%)",newv,per);
-            frequency_set(newv);
-        }
-       }
-       adc_start();
-   }
-}
 
 FATFS = fs;
 const char* write_buffer[10];
@@ -108,6 +51,7 @@ int write_log(uint16_t k){
     return 1;
 }
 
+extern volatile uint8_t flag2,num_push;
 
 void app_runCSD(){
   LCD_clear();
@@ -153,18 +97,56 @@ void app_runCSD(){
   }
 }
 
+void app_run2(){
+  LCD_clear();
+  BYTE csd[16];
+  if(detectCard(csd)){
+   LCD_printf("Tarjeta detectada\n");
+    //for(uint8_t i=0;i<16;i++)
+      //LCD_printf("%02x-",csd[i]);
+
+    for(uint8_t i=0; i<8;i++){
+      BYTE swap = csd[15-i];
+      csd[15-i] = csd[i];
+      csd[i] = swap;
+    }
+
+    csd_bf a;
+    memcpy(&a,csd,16);
+    LCD_cleanpage(0);
+
+    while(1){
+      if(flag2){
+	LCD_reset_address();
+        LCD_printf("\rVeces: %04u",num_push);
+      }
+    }
+
+
+
+
+
+
+  }
+  else{//Fail
+	LCD_printf("Fail");
+  }
+}
+
+
 
 int main (void)
 {
 	init();
 	led_init();
 	SDCard_init();
+        button_init();
 	//timer_init();
 	//timer_start();
  	//pot_init();
     	//adc_init();
 	//LCD_clear();
-	app_runCSD();
+	app_run2();
 	_NOP();
 
 	while(1);
