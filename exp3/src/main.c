@@ -29,19 +29,19 @@ void init() {
 
 
 
-FATFS = fs;
-const char* write_buffer[10];
+FATFS fs;
+char write_buffer[10];
 
 int write_log(uint16_t k){
 
-    FIL = file;
+    FIL file;
     FRESULT fr;
 
     fr = f_open(&file, "log.txt", FA_WRITE);
     if(fr != FR_OK) return -1;
 
     sprintf(write_buffer, "%d", k);
-    uint8_t a;
+    UINT a;
     fr = f_write(&file, write_buffer, 10, &a);
 
     if(fr != FR_OK) return -1;
