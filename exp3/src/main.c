@@ -144,15 +144,12 @@ void app_run2(){
       csd[i] = swap;
     }
 
+    mount_sd();
     csd_bf a;
     memcpy(&a,csd,16);
     LCD_cleanpage(0);
     read_file();
 
-
-    mount_sd();
-    write_log(15);
-    read_log();
 
     while(1){
       if(flag2){
