@@ -33,7 +33,7 @@ FATFS fs;
 char write_buffer[10];
 
 void mount_sd() {
-    fs = f_mount(&fs, "", 0);
+    f_mount(0, &fs);
 }
 
 int write_log(uint16_t k){
