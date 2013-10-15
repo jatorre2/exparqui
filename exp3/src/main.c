@@ -86,6 +86,28 @@ void app_run2() {
    }
 }
 
+FATFS = fs;
+const char* write_buffer[10];
+
+int write_log(uint16_t k){
+
+    FIL = file;
+    FRESULT fr;
+
+    fr = f_open(&file, "log.txt", FA_WRITE);
+    if(fr != FR_OK) return -1;
+
+    sprintf(write_buffer, "%d", k);
+    uint8_t a;
+    fr = f_write(&file, write_buffer, 10, &a);
+
+    if(fr != FR_OK) return -1;
+
+    f_close(&file);
+    if(fr != FR_OK) return -1;
+    return 1;
+}
+
 
 void app_runCSD(){
   LCD_clear();
@@ -108,7 +130,7 @@ void app_runCSD(){
      LCD_printf("CSD Version 1.0\n\r");
    else if(a.CSD_STRUCTURE == 1)
      LCD_printf("CSD Version 2.0\n\r");
-   
+
 
     uint64_t size_mmc = (uint64_t)(a.C_SIZE+1);
     uint64_t multiplier = (uint64_t)1<<(uint64_t)(a.C_SIZE_MULT+2+a.READ_BL_LEN);
