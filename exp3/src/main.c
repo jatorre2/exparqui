@@ -55,6 +55,7 @@ int write_log(uint16_t k){
     return 1;
 }
 
+
 extern volatile uint8_t flag2,num_push;
 
 void app_runCSD(){
@@ -118,6 +119,11 @@ void app_run2(){
     csd_bf a;
     memcpy(&a,csd,16);
     LCD_cleanpage(0);
+
+
+    mount_sd();
+    write_log(15);
+    read_log();
 
     while(1){
       if(flag2){
