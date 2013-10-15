@@ -33,18 +33,12 @@ FATFS fs;
 char write_buffer[10];
 char read_buffer[10];
 
-void mount_sd() {
-    f_mount(0, &fs);
-}
-
-
-
 int write_log(uint16_t k){
 
     FIL file;
     FRESULT fr;
 
-    fr = f_open(&file, "log.txt", FA_WRITE);
+    fr = f_open(&file, "log.txt", FA_OPEN_ALWAYS | FA_WRITE);
     if(fr != FR_OK) return -1;
 
     sprintf(write_buffer, "%d", k);
@@ -66,9 +60,25 @@ int read_file(){
 
     FIL file;
     FRESULT fr;
+    FILINFO fno;
+    fr = f_stat("log.txt",&fno);
 
-    fr = f_open(&file, "log.txt", FA_READ);
-    if(fr != FR_OK) return -1;
+    while(fr!= FR_OK && fr!=FR_NO_FILE ){
+      fr = f_stat("log.txt",&fno);
+    }
+    LCD_printf("\n\r%d",fr);
+    if(fr == FR_NO_FILE){
+      fr = f_open(&file, "log.txt", FA_CREATE_NEW | FA_READ);
+      LCD_printf("Archivo no encontrado, se creara uno");
+    } 
+    else if(fr == FR_OK){
+      fr = f_open(&file, "log.txt", FA_OPEN_EXISTING | FA_READ);
+      LCD_printf("Archivo encontrado");
+    }
+    else{
+      LCD_printf("inv");
+      return -1;
+    }
 
     UINT a;
     fr = f_read(&file, read_buffer, 10, &a);
@@ -144,7 +154,7 @@ void app_run2(){
       csd[i] = swap;
     }
 
-    mount_sd();
+    while(f_mount(0, &fs) != FR_OK);
     csd_bf a;
     memcpy(&a,csd,16);
     LCD_cleanpage(0);
@@ -176,7 +186,9 @@ int main (void)
 {
 	init();
 	led_init();
+        _NOP();
 	SDCard_init();
+        _NOP();
         button_init();
 	//timer_init();
 	//timer_start();
@@ -184,7 +196,6 @@ int main (void)
     	//adc_init();
 	//LCD_clear();
 	app_run2();
-	_NOP();
 
 	while(1);
 
