@@ -25,12 +25,13 @@ void button_init(void) {
 
 
 volatile uint8_t state_led = 0; 
-volatile uint8_t flag1 = 0,flag2 = 0, is_in_LPM0 = 0;
+volatile uint8_t flag1 = 0,flag2 = 0, is_in_LPM0 = 0, num_push = 0;
 
 //In uniarch there is no more signal.h to sugar coat the interrupts definition, so we do it here
 #ifndef interrupt
 #define interrupt(x) void __attribute__((interrupt (x))) 
 #endif
+/*
 interrupt (PORT1_VECTOR) PORT1_ISR()
 {
 	if (BUTTON1_IFG & BUTTON1_BIT)
@@ -66,6 +67,7 @@ interrupt (PORT1_VECTOR) PORT1_ISR()
 
 	}
 }
+*/
 
 interrupt (PORT2_VECTOR) PORT2_ISR()
 {
@@ -78,15 +80,8 @@ interrupt (PORT2_VECTOR) PORT2_ISR()
 		  BUTTON2_IES &= ~BUTTON2_BIT; flag2 = 1;
 		}
 
-		if(flag1 && flag2){
-		  if(is_in_LPM0){
-		    is_in_LPM0 = 0;
-		    LPM0_EXIT;
-		  }
-		  else{
-		    is_in_LPM0 = 1;
-	    
-		  }
+		if(flag2){
+		  num_push++;
 		}
 	
 
