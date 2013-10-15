@@ -31,10 +31,13 @@ void init() {
 
 FATFS fs;
 char write_buffer[10];
+char read_buffer[10];
 
 void mount_sd() {
     f_mount(0, &fs);
 }
+
+
 
 int write_log(uint16_t k){
 
@@ -57,6 +60,31 @@ int write_log(uint16_t k){
 
 
 extern volatile uint8_t flag2,num_push;
+
+
+int read_file(){
+
+    FIL file;
+    FRESULT fr;
+
+    fr = f_open(&file, "log.txt", FA_READ);
+    if(fr != FR_OK) return -1;
+
+    UINT a;
+    fr = f_read(&file, read_buffer, 10, &a);
+
+    if(fr != FR_OK) return -1;
+
+    f_close(&file);
+    if(fr != FR_OK) return -1;
+
+    num_push = (uint8_t)atoi(read_buffer);
+
+
+    return 1;
+}
+
+
 
 void app_runCSD(){
   LCD_clear();
@@ -119,6 +147,7 @@ void app_run2(){
     csd_bf a;
     memcpy(&a,csd,16);
     LCD_cleanpage(0);
+    read_file();
 
 
     mount_sd();
@@ -129,6 +158,7 @@ void app_run2(){
       if(flag2){
 	LCD_reset_address();
         LCD_printf("\rVeces: %04u",num_push);
+        write_log(num_push);
       }
     }
 
