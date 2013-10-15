@@ -32,6 +32,10 @@ void init() {
 FATFS fs;
 char write_buffer[10];
 
+void mount_sd() {
+    fs = f_mount(&fs, "", 0);
+}
+
 int write_log(uint16_t k){
 
     FIL file;
