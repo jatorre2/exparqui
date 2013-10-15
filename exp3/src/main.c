@@ -92,8 +92,8 @@ void app_runCSD(){
   BYTE csd[16];
   if(detectCard(csd)){
    LCD_printf("Tarjeta detectada\n");
-    for(uint8_t i=0;i<16;i++)
-      LCD_printf("%02x-",csd[i]);
+    //for(uint8_t i=0;i<16;i++)
+      //LCD_printf("%02x-",csd[i]);
 
     for(uint8_t i=0; i<8;i++){
       BYTE swap = csd[15-i];
@@ -104,12 +104,18 @@ void app_runCSD(){
     csd_bf a;
     memcpy(&a,csd,16);
 
+   if(a.CSD_STRUCTURE == 0)
+     LCD_printf("CSD Version 1.0\n\r");
+   else if(a.CSD_STRUCTURE == 1)
+     LCD_printf("CSD Version 2.0\n\r");
+   
 
     uint64_t size_mmc = (uint64_t)(a.C_SIZE+1);
     uint64_t multiplier = (uint64_t)1<<(uint64_t)(a.C_SIZE_MULT+2+a.READ_BL_LEN);
     size_mmc*=multiplier;
 
-    LCD_printf("\n\rTamano: \n\r%llu",size_mmc);
+    LCD_printf("Capacidad: \n\r%llu\n\r",size_mmc);
+    LCD_printf("Bytes por sector: %u",a.READ_BL_LEN);
     /*
     if(version == 0){
       LCD_printf("Version de la tarjeta: 1.0");
