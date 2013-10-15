@@ -1,6 +1,6 @@
 #include "button.h"
 void button_init(void) {
-        BUTTON1_IE  &= ~BUTTON1_BIT; // Disable interrupts while setting up
+/*        BUTTON1_IE  &= ~BUTTON1_BIT; // Disable interrupts while setting up
         BUTTON1_DIR &= ~BUTTON1_BIT; // Treat as input (P1DIR7 = 0)
         BUTTON1_IES |=  BUTTON1_BIT; // Falling edge interrupt (1)
         BUTTON1_OUT |=  BUTTON1_BIT; // Pull up
@@ -8,7 +8,7 @@ void button_init(void) {
         BUTTON1_IFG &= ~BUTTON1_BIT;
         BUTTON1_SEL &= ~BUTTON1_BIT; // I/O function
         BUTTON1_IE  |=  BUTTON1_BIT; // Enable interrupt
-
+*/
         BUTTON2_IE  &= ~BUTTON2_BIT; // Disable interrupts while setting up
         BUTTON2_DIR &= ~BUTTON2_BIT; // Treat as input (P2DIR7 = 0)
         BUTTON2_IES |=  BUTTON2_BIT; // Falling edge interrupt (1)

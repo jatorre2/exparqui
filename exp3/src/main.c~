@@ -26,7 +26,64 @@ void init() {
 	__enable_interrupt();
 }
 
+
+
+
+FATFS fs;
+char write_buffer[10];
+char read_buffer[10];
+
+void mount_sd() {
+    f_mount(0, &fs);
+}
+
+
+
+int write_log(uint16_t k){
+
+    FIL file;
+    FRESULT fr;
+
+    fr = f_open(&file, "log.txt", FA_WRITE);
+    if(fr != FR_OK) return -1;
+
+    sprintf(write_buffer, "%d", k);
+    UINT a;
+    fr = f_write(&file, write_buffer, 10, &a);
+
+    if(fr != FR_OK) return -1;
+
+    f_close(&file);
+    if(fr != FR_OK) return -1;
+    return 1;
+}
+
 extern volatile uint8_t flag2,num_push;
+
+
+int read_file(){
+
+    FIL file;
+    FRESULT fr;
+
+    fr = f_open(&file, "log.txt", FA_READ);
+    if(fr != FR_OK) return -1;
+
+    UINT a;
+    fr = f_read(&file, read_buffer, 10, &a);
+
+    if(fr != FR_OK) return -1;
+
+    f_close(&file);
+    if(fr != FR_OK) return -1;
+
+    num_push = (uint8_t)atoi(read_buffer);
+
+
+    return 1;
+}
+
+
 
 void app_runCSD(){
   LCD_clear();
@@ -49,7 +106,7 @@ void app_runCSD(){
      LCD_printf("CSD Version 1.0\n\r");
    else if(a.CSD_STRUCTURE == 1)
      LCD_printf("CSD Version 2.0\n\r");
-   
+
 
     uint64_t size_mmc = (uint64_t)(a.C_SIZE+1);
     uint64_t multiplier = (uint64_t)1<<(uint64_t)(a.C_SIZE_MULT+2+a.READ_BL_LEN);
@@ -88,11 +145,13 @@ void app_run2(){
 
     csd_bf a;
     memcpy(&a,csd,16);
+    LCD_cleanpage(0);
 
     while(1){
       if(flag2){
 	LCD_reset_address();
         LCD_printf("\rVeces: %04u",num_push);
+        write_log(num_push);
       }
     }
 
