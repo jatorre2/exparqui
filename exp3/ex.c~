@@ -1,0 +1,39 @@
+/* localtime example */
+#include <stdio.h>
+#include <time.h>
+
+int main ()
+{
+  time_t rawtime;
+  struct tm * timeinfo;
+
+  time ( &rawtime );
+  timeinfo = localtime ( &rawtime );
+
+  printf ( "Year: %u\n", timeinfo->tm_year+1900 );
+  printf ( "Month: %u\n", timeinfo->tm_mon+1 );
+  printf ( "Day: %u\n", timeinfo->tm_mday );
+  printf ( "Hour: %u\n", timeinfo->tm_hour );
+  printf ( "Min: %u\n", timeinfo->tm_min );
+  printf ( "Sec: %u\n", timeinfo->tm_sec );
+
+  FILE * pFile;
+  pFile = fopen ("src/rtc_init.h","w");
+  if (pFile!=NULL)
+  {
+    fprintf (pFile,"#define INITYEAR %u\n#define INITMON  %u\n#define INITDAY  %u\n#define INITHOUR %u\n#define INITMIN  %u\n#define INITSEC  %u",
+timeinfo->tm_year+1900,
+timeinfo->tm_mon+1,
+timeinfo->tm_mday,
+timeinfo->tm_hour,
+timeinfo->tm_min,
+timeinfo->tm_sec);
+    fclose (pFile);
+  }
+
+
+
+ // printf ( "Current local time and date: %s", asctime (timeinfo) );
+
+  return 0;
+}

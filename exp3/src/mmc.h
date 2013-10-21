@@ -22,4 +22,5 @@ typedef struct csd_bf_t {
 uint8_t detectCard(BYTE * csd);
 int rcvr_datablock (BYTE * buff, UINT btr); 
 BYTE send_cmd (BYTE cmd, DWORD arg); 
+DWORD get_fattime (void);
 
