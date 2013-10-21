@@ -8,4 +8,3 @@ typedef struct TIME_DATA {
 	uint8_t  minute;
 	uint8_t  second;
 } TIME_DATA;
-TIME_DATA RTC_get_time(void);

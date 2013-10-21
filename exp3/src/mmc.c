@@ -50,6 +50,16 @@
     | (WORD) (4 << 11)		// rtcHour
     | (WORD) (30 << 5)		// rtcMin
     | (WORD) (0 >> 1);		// rtcSec
+
+
+    TIME_DATA data = RTC_get_time();
+    tmr = (((DWORD) data.year - 60) << 25)	// rtcYear
+    | ((DWORD) data.month << 21)		// rtcMon
+    | ((DWORD) data.day << 16)	// rtcMday
+    | (WORD) (data.hour << 11)		// rtcHour
+    | (WORD) (data.minute << 5)		// rtcMin
+    | (WORD) (data.second >> 1);		// rtcSec
+
   return tmr;
 }
 

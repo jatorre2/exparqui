@@ -11,6 +11,17 @@
 volatile struct TIME_DATA last_time_data;
 volatile struct TIME_DATA temp_time_data;
 
+TIME_DATA RTC_get_time(void) {
+	TIME_DATA data;
+	data.year = RTCYEAR;
+	data.month = RTCMON;
+	data.day  = RTCDAY;
+	data.hour = RTCHOUR;
+	data.minute = RTCMIN;
+	data.second = RTCSEC;
+	return data;	
+}
+
 void RTC_set_values(TIME_DATA time_data) {
 	RTCYEAR    = time_data.year;
 	RTCMON	   = time_data.month;
@@ -72,6 +83,14 @@ int RTC_update_time(TIME_DATA data) {
 	return -1;
 }
 
+void RTC_seconds_handler() {
+//	LCD_print_time(last_time_data);
+	P8DIR |= BIT2;
+	P8OUT |= BIT2;
+	__delay_cycles(200);
+	P8OUT &= ~BIT2;
+}
+
 #ifndef RTCOFIFG
 	#define RTCOFIFG BIT3
 #endif
@@ -89,7 +108,7 @@ interrupt (RTC_VECTOR) RTC_ISR() {
 		RTC_update_time(temp_time_data);
 		if(temp_time_data.second != last_time_data.second) {
 			last_time_data = temp_time_data;
-	//		RTC_seconds_handler();
+			RTC_seconds_handler();
 		}
 	}
 	RTCCTL0 &= ~(RTCTEVIFG | RTCRDYIFG | RTCAIFG | RTCOFIFG); // Turn off flags
