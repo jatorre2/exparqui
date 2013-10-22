@@ -104,15 +104,37 @@ void accel_init() {
 
 }
 
+
+uint8_t accel_read(uint8_t address) {
+    uint8_t result;
+
+    address = address << 2;
+
+    ACCEL_CS_OUT &= ~ACCEL_CS_BIT;
+
+    UCA0TXBUF = address;
+
+    while(UCA0STAT & UCABUSY);
+
+    UCA0RXBUF;
+    UCA0TXBUF = 0x00;
+
+    while(UCA0STAT & UCABUSY);
+    //while(! ACCEL_INT)
+
+    result = UCA0RXBUF;
+
+    ACCEL_CS_OUT |= ACCEL_CS_BIT;
+
+    return result;
+}
+
 #ifndef interrupt
 #define interrupt(x) void __attribute__((interrupt (x)))
 #endif
 interrupt (PORT2_VECTOR) PORT2_ISR()
 {
 	if (ACCEL_INT_IFG & ACCEL_INT_BIT){
-
-
-
 
 		// Tell the microcontroller that the interrupt has been processed
 		ACCEL_INT_IFG &= ~ACCEL_INT_BIT;
