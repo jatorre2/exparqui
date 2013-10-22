@@ -88,7 +88,7 @@ task :install do
 	abort "Abort: #{bin_out} not found. Run 'rake' first" unless File.exists?(bin_out)
 	puts "Installing bin.ihex..."
 	#`./goodfet.bsl -c /dev/ttyUSB0 -r -e -I -S 38400 -P int_vec.txt -p bin.ihex`
-	`mspdebug rf2500 "prog bin.elf"`
+	`sudo mspdebug rf2500 "prog bin.elf"`
 	abort "Abort: Error installing #{bin_out}" unless $?.to_i == 0
 	puts "#{bin_out} succesfully installed!"
 end
