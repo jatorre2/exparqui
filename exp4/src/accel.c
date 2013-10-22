@@ -14,6 +14,8 @@
 
 void accel_init() {
 
+
+
     //Power on
 
 }
