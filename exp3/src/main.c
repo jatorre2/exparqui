@@ -185,8 +185,8 @@ void app_run2(){
 
     while(1){
 
-      P8DIR |= BIT1;
-      P8OUT ^= BIT1;
+     // P8DIR |= BIT1;
+     // P8OUT ^= BIT1;
       if(flag2){
 	LCD_reset_address();
         LCD_printf("\rVeces: %04u",num_push);
@@ -194,7 +194,7 @@ void app_run2(){
         LCD_print_time(RTC_get_time());
       }
 
-      __delay_cycles(1000);
+      //__delay_cycles(1000);
     }
 
 
@@ -213,6 +213,7 @@ void app_run2(){
 int main (void)
 {
 	init();
+        _NOP();
 	led_init();
         _NOP();
 	SDCard_init();

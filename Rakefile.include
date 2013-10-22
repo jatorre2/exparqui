@@ -58,8 +58,8 @@ task :build => :link
 desc "The default compiles and links"
 task :default => :link
 
-`gcc ex.c`
-`./a.out`
+#`gcc ex.c`
+#`./a.out`
 
 
 desc "Link the compiled objects into the binary"
