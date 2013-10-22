@@ -22,6 +22,11 @@ void init() {
 	__enable_interrupt();
 }
 
+
+void app_run() {
+
+}
+
 extern volatile uint8_t flag1,flag2, is_in_LPM0, state_led;
 
 void app_run1() {
@@ -30,7 +35,7 @@ void app_run1() {
 	uint32_t percentage = (uint32_t)TA0CCR0*100;
 	percentage/=(uint32_t)0x0FFF;
 	LCD_printf("\rT: %04d (%03u%)",TA0CCR0, percentage);
-	while(1){	
+	while(1){
 	  if(flag1 && flag2){
 	    if(is_in_LPM0){
 		_NOP();
@@ -93,11 +98,11 @@ int main (void)
  	pot_init();
     	adc_init();
 	LCD_clear();
-	//app_run1();
-	
-	app_run2();
+	app_run();
 
-	
+	//app_run2();
+
+
 
 
 	return 0;

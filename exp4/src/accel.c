@@ -129,6 +129,28 @@ uint8_t accel_read(uint8_t address) {
     return result;
 }
 
+void accel_write(uint8_t address, uint8_t data){
+
+    address = address << 2;
+    address |= 0x02;
+    ACCEL_CS_OUT &= ~ACCEL_CS_BIT;
+
+    UCA0TXBUF = address;
+
+    while(UCA0STAT & UCABUSY);
+
+    UCA0RXBUF;
+    UCA0TXBUF = data;
+
+    while(UCA0STAT & UCABUSY);
+    //while(! ACCEL_INT)
+
+
+    ACCEL_CS_OUT |= ACCEL_CS_BIT;
+
+}
+
+
 #ifndef interrupt
 #define interrupt(x) void __attribute__((interrupt (x)))
 #endif

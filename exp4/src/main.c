@@ -11,6 +11,7 @@
 #include "timer.h"
 #include "button.h"
 #include "adc.h"
+#include "accel.h"
 
 void init() {
 	WDTCTL = WDTPW + WDTHOLD;
