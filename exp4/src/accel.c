@@ -145,7 +145,7 @@ void accel_init() {
     // MSB
     // Use SMCLK, keep RESET
     UCA0CTL1 = UCSSEL_2 | UCSWRST;
-    UCA0BR0 = 0x40;
+    UCA0BR0 = 20;
     UCA0BR1 = 0;
     // Release USCI state machine
     UCA0CTL1 &= ~UCSWRST;

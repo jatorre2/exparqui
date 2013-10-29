@@ -28,9 +28,13 @@ void app_run() {
     accel_init();
     while(1) {
     int8_t x = accel_read(0x06);
+    __delay_cycles(100);
     int8_t y = accel_read(0x07);
+
+    __delay_cycles(100);
     int8_t z = accel_read(0x08);
-    LCD_printf("\r[%d,%d,%d]", x,y,z);
+    __delay_cycles(100);
+    LCD_printf("\r[%d  ,%d  ,%d]", x,y,z);
     }
 }
 
