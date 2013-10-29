@@ -23,23 +23,35 @@ void init() {
 	__enable_interrupt();
 }
 
+extern volatile uint8_t flag1,flag2, is_in_LPM0, state_led;
 
 void app_run() {
+    button_init();
     accel_init();
+    int8_t x0=0, y0=0, z0=0;
+    int8_t x,y,z,xx,yy,zz;
     while(1) {
-    int8_t x = accel_read(0x06);
-    __delay_cycles(100);
-    int8_t y = accel_read(0x07);
+        x = accel_read(0x06);
+        __delay_cycles(100);
+        y = accel_read(0x07);
+        __delay_cycles(100);
+        z = accel_read(0x08);
+        __delay_cycles(100);
 
-    __delay_cycles(100);
-    int8_t z = accel_read(0x08);
-    __delay_cycles(100);
-    LCD_reset_address();
-    LCD_printf("X: %d     \n\rY: %d     \n\rZ: %d    ", x,y,z);
+        xx = x-x0;
+        yy = y-y0;
+        zz = z-z0;
+
+        LCD_reset_address();
+        LCD_printf("X: %d     \n\rY: %d     \n\rZ: %d    ", xx,yy,zz);
+        if(flag1) {
+            x0 = x;
+            y0 = y;
+            z0 = z;
+        }
     }
 }
 
-extern volatile uint8_t flag1,flag2, is_in_LPM0, state_led;
 
 void app_run1() {
 	button_init();
