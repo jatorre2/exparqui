@@ -26,8 +26,8 @@ void led_toggle(uint8_t led_num) {
 void led_state(uint8_t led_num, uint8_t state) {
 	switch(led_num) {
 		case 1: LED1_OUT = (state & BIT0) ? LED1_OUT | BIT0 : LED1_OUT & ~BIT0; break;
-		case 2: LED_OUT = (state & BIT0) ? LED_OUT | BIT2 : LED_OUT & ~BIT2; break;
-		case 3: LED_OUT = (state & BIT0) ? LED_OUT | BIT3 : LED_OUT & ~BIT3; break;
+		case 2: LED_OUT = (state & BIT0) ? LED_OUT | BIT1 : LED_OUT & ~BIT1; break;
+		case 3: LED_OUT = (state & BIT0) ? LED_OUT | BIT2 : LED_OUT & ~BIT2; break;
 		default: break;
 	}
 }
