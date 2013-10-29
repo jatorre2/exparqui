@@ -45,7 +45,8 @@ void app_run() {
         LCD_reset_address();
         LCD_printf("X: %d     \n\rY: %d     \n\rZ: %d    ", xx,yy,zz);
         if(flag1) {
-            x0 = x;
+            __delay_cycles(100);
+	    x0 = x;
             y0 = y;
             z0 = z;
         }
