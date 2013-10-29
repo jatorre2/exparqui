@@ -31,24 +31,26 @@ void app_run() {
     int8_t x0=0, y0=0, z0=0;
     int8_t x,y,z,xx,yy,zz;
     while(1) {
-        x = accel_read(0x06);
-        __delay_cycles(100);
-        y = accel_read(0x07);
-        __delay_cycles(100);
-        z = accel_read(0x08);
-        __delay_cycles(100);
-
-        xx = x-x0;
-        yy = y-y0;
-        zz = z-z0;
-
-        LCD_reset_address();
-        LCD_printf("X: %d     \n\rY: %d     \n\rZ: %d    ", xx,yy,zz);
-        if(flag1) {
+        if(ACCEL_INT_OUT) {
+            x = accel_read(0x06);
             __delay_cycles(100);
-	    x0 = x;
-            y0 = y;
-            z0 = z;
+            y = accel_read(0x07);
+            __delay_cycles(100);
+            z = accel_read(0x08);
+            __delay_cycles(100);
+
+            xx = x-x0;
+            yy = y-y0;
+            zz = z-z0;
+
+            LCD_reset_address();
+            LCD_printf("X: %d     \n\rY: %d     \n\rZ: %d    ", xx,yy,zz);
+            if(flag1) {
+                __delay_cycles(100);
+	            x0 = x;
+                y0 = y;
+                z0 = z;
+            }
         }
     }
 }
