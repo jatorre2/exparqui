@@ -69,6 +69,54 @@
 #define ACCEL_SOMI_IFG P3IFG
 
 
+
+
+
+uint8_t accel_read(uint8_t address) {
+    uint8_t result;
+
+    address = address << 2;
+
+    ACCEL_CS_OUT &= ~ACCEL_CS_BIT;
+
+    UCA0TXBUF = address;
+
+    while(UCA0STAT & UCBUSY);
+
+    UCA0RXBUF;
+    UCA0TXBUF = 0x00;
+
+    while(UCA0STAT & UCBUSY);
+    //while(! ACCEL_INT)
+
+    result = UCA0RXBUF;
+
+    ACCEL_CS_OUT |= ACCEL_CS_BIT;
+
+    return result;
+}
+
+void accel_write(uint8_t address, uint8_t data){
+
+    address = address << 2;
+    address |= 0x02;
+    ACCEL_CS_OUT &= ~ACCEL_CS_BIT;
+
+    UCA0TXBUF = address;
+
+    while(UCA0STAT & UCBUSY);
+
+    UCA0RXBUF;
+    UCA0TXBUF = data;
+
+    while(UCA0STAT & UCBUSY);
+    //while(! ACCEL_INT)
+
+
+    ACCEL_CS_OUT |= ACCEL_CS_BIT;
+
+}
+
 void accel_init() {
 
     //CS in low
@@ -101,52 +149,6 @@ void accel_init() {
     UCA0IFG &= ~UCRXIFG;
 
     accel_write(0x02, 0x92);
-
-    ACCEL_CS_OUT |= ACCEL_CS_BIT;
-
-}
-
-
-uint8_t accel_read(uint8_t address) {
-    uint8_t result;
-
-    address = address << 2;
-
-    ACCEL_CS_OUT &= ~ACCEL_CS_BIT;
-
-    UCA0TXBUF = address;
-
-    while(UCA0STAT & UCABUSY);
-
-    UCA0RXBUF;
-    UCA0TXBUF = 0x00;
-
-    while(UCA0STAT & UCABUSY);
-    //while(! ACCEL_INT)
-
-    result = UCA0RXBUF;
-
-    ACCEL_CS_OUT |= ACCEL_CS_BIT;
-
-    return result;
-}
-
-void accel_write(uint8_t address, uint8_t data){
-
-    address = address << 2;
-    address |= 0x02;
-    ACCEL_CS_OUT &= ~ACCEL_CS_BIT;
-
-    UCA0TXBUF = address;
-
-    while(UCA0STAT & UCABUSY);
-
-    UCA0RXBUF;
-    UCA0TXBUF = data;
-
-    while(UCA0STAT & UCABUSY);
-    //while(! ACCEL_INT)
-
 
     ACCEL_CS_OUT |= ACCEL_CS_BIT;
 

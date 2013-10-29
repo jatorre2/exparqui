@@ -66,7 +66,7 @@ interrupt (PORT1_VECTOR) PORT1_ISR()
 
 	}
 }
-
+/*
 interrupt (PORT2_VECTOR) PORT2_ISR()
 {
 	if (BUTTON2_IFG & BUTTON2_BIT)
@@ -95,4 +95,4 @@ interrupt (PORT2_VECTOR) PORT2_ISR()
 		// Tell the microcontroller that the interrupt has been processed
 		BUTTON2_IFG &= ~BUTTON2_BIT;
 	}
-}
+}*/
