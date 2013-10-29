@@ -27,6 +27,7 @@ void init() {
 void app_run() {
     accel_init();
     int8_t data = accel_read(0x07);
+    LCD_printf("X: %d", data);
 }
 
 extern volatile uint8_t flag1,flag2, is_in_LPM0, state_led;
