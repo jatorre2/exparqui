@@ -8,7 +8,7 @@ void button_init(void) {
         BUTTON1_IFG &= ~BUTTON1_BIT;
         BUTTON1_SEL &= ~BUTTON1_BIT; // I/O function
         BUTTON1_IE  |=  BUTTON1_BIT; // Enable interrupt
-
+/*
         BUTTON2_IE  &= ~BUTTON2_BIT; // Disable interrupts while setting up
         BUTTON2_DIR &= ~BUTTON2_BIT; // Treat as input (P2DIR7 = 0)
         BUTTON2_IES |=  BUTTON2_BIT; // Falling edge interrupt (1)
@@ -17,7 +17,7 @@ void button_init(void) {
         BUTTON2_IFG &= ~BUTTON2_BIT;
         BUTTON2_SEL &= ~BUTTON2_BIT; // I/O function
         BUTTON2_IE  |=  BUTTON2_BIT; // Enable interrupt
-
+*/
 }
 
 

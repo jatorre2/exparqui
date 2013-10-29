@@ -24,18 +24,18 @@ void button_init(void) {
 
 
 
-volatile uint8_t state_led = 0; 
+volatile uint8_t state_led = 0;
 volatile uint8_t flag1 = 0,flag2 = 0, is_in_LPM0 = 0;
 
 //In uniarch there is no more signal.h to sugar coat the interrupts definition, so we do it here
 #ifndef interrupt
-#define interrupt(x) void __attribute__((interrupt (x))) 
+#define interrupt(x) void __attribute__((interrupt (x)))
 #endif
 interrupt (PORT1_VECTOR) PORT1_ISR()
 {
 	if (BUTTON1_IFG & BUTTON1_BIT)
 	{
-		
+
 		if(flag1){
 		  BUTTON1_IES |= BUTTON1_BIT; flag1 = 0;
 		}
@@ -43,30 +43,13 @@ interrupt (PORT1_VECTOR) PORT1_ISR()
 		  BUTTON1_IES &= ~BUTTON1_BIT; flag1 = 1;
 		}
 
-		// Put interrupt code here
-		if(flag1 && flag2){
-		  if(is_in_LPM0){
-		    is_in_LPM0 = 0;
-		    LPM0_EXIT;
-		  }
-		  else{
-		    is_in_LPM0 = 1;
-	    
-		  }
-		}
-		
-		else if(flag1){
-		  TA0CCR0 = 0x0FFF;
-		  state_led = (state_led+1)%4;
-		
-		  TA0CCR0>>=state_led;
-		}
+
 		// Tell the microcontroller that the interrupt has been processed
 		BUTTON1_IFG &= ~BUTTON1_BIT;
 
 	}
 }
-
+/*
 interrupt (PORT2_VECTOR) PORT2_ISR()
 {
 	if (BUTTON2_IFG & BUTTON2_BIT)
@@ -85,14 +68,14 @@ interrupt (PORT2_VECTOR) PORT2_ISR()
 		  }
 		  else{
 		    is_in_LPM0 = 1;
-	    
+
 		  }
 		}
-	
+
 
 		// Put interrupt code here
 
 		// Tell the microcontroller that the interrupt has been processed
 		BUTTON2_IFG &= ~BUTTON2_BIT;
 	}
-}
+}*/
