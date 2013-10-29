@@ -100,7 +100,7 @@ void accel_init() {
     UCA0CTL1 &= ~UCSWRST;
     UCA0IFG &= ~UCRXIFG;
 
-    accel_read(0x02, 0x92);
+    accel_write(0x02, 0x92);
 
     ACCEL_CS_OUT |= ACCEL_CS_BIT;
 
@@ -165,3 +165,4 @@ interrupt (PORT2_VECTOR) PORT2_ISR()
 
         }
 }
+
