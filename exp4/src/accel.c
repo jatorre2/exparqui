@@ -126,7 +126,7 @@ void accel_init() {
 
     //Power on 3.6
     ACCEL_PWR_SEL &= ~ACCEL_PWR_BIT;
-    ACCEL_PWR_SEL |= ACCEL_PWR_BIT;
+    ACCEL_PWR_DIR |= ACCEL_PWR_BIT;
     ACCEL_PWR_OUT |= ACCEL_PWR_BIT;
 
     //Setup 3.3, 3.4 to simo, somi
