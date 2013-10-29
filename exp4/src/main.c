@@ -30,7 +30,7 @@ void app_run() {
     accel_init();
     led_init();
     led_state(1,0);
-    led_state(2,1);
+    led_state(2,0);
     led_state(3,0);
     int8_t x0=0, y0=0, z0=0;
     int8_t x,y,z,xx,yy,zz;
@@ -55,6 +55,23 @@ void app_run() {
                 y0 = y;
                 z0 = z;
             }
+
+	    if(abs(xx)>20)
+		led_state(1,1);
+	    else
+		led_state(1,0);
+	    if(abs(yy)>20)
+		led_state(2,1);
+	    else
+		led_state(2,0);
+	    if(abs(zz)>20)
+		led_state(3,1);
+	    else
+		led_state(3,0);
+
+
+
+
         }
     }
 }
