@@ -34,7 +34,8 @@ void app_run() {
     __delay_cycles(100);
     int8_t z = accel_read(0x08);
     __delay_cycles(100);
-    LCD_printf("\r[%d  ,%d  ,%d]", x,y,z);
+    LCD_reset_address();
+    LCD_printf("X: %d\nY: %d\nZ: %d", x,y,z);
     }
 }
 
