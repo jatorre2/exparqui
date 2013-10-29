@@ -28,6 +28,10 @@ extern volatile uint8_t flag1,flag2, is_in_LPM0, state_led;
 void app_run() {
     button_init();
     accel_init();
+    led_init();
+    led_state(1,0);
+    led_state(2,1);
+    led_state(3,0);
     int8_t x0=0, y0=0, z0=0;
     int8_t x,y,z,xx,yy,zz;
     while(1) {
