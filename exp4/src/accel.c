@@ -133,6 +133,9 @@ void accel_init() {
     ACCEL_SOMI_SEL |= ACCEL_SOMI_BIT;
     ACCEL_SIMO_SEL |= ACCEL_SIMO_BIT;
 
+    //Setup 2.7 to UCA0CLK
+    ACCEL_SCK_SEL |= ACCEL_SCK_BIT;
+
     // Initialize USCI_A0 for SPI Master operation
     // Put state machine in reset
     UCA0CTL1 |= UCSWRST;
@@ -142,7 +145,7 @@ void accel_init() {
     // MSB
     // Use SMCLK, keep RESET
     UCA0CTL1 = UCSSEL_2 | UCSWRST;
-    UCA0BR0 = 0x02;
+    UCA0BR0 = 0x40;
     UCA0BR1 = 0;
     // Release USCI state machine
     UCA0CTL1 &= ~UCSWRST;
