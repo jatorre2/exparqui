@@ -1,6 +1,7 @@
 #include <msp430.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "accel.h"
 
 uint8_t accel_read(uint8_t address) {
     uint8_t result;
@@ -85,6 +86,7 @@ void accel_init() {
     __delay_cycles(10000);
 
     accel_write(0x02, 0x92);
+    __delay_cycles(100);
 
     ACCEL_CS_OUT |= ACCEL_CS_BIT;
 

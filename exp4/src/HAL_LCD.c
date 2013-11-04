@@ -45,7 +45,7 @@
 //Globals 
 
 
-uint8_t screen[8][102];
+volatile uint8_t screen[8][102];
 uint8_t curr_page=0,curr_col=0;
 
 
@@ -209,6 +209,18 @@ void LCD_setPixel(uint8_t i, uint8_t j,uint8_t set){
 
 }
 
+uint8_t LCD_getPixel(uint8_t i, uint8_t j){
+
+    uint8_t p = 7-(i/8);
+    uint8_t bit = 7-(i%8);
+
+
+   if(screen[p][j] & 1<<bit)
+	return 1;
+   else
+	return 0;
+}
+
 
 //page from 0 to 7 (up to bottom)
 void LCD_cleanpage(uint8_t page){
@@ -301,12 +313,14 @@ void LCD_draw_img(){
         uint8_t msb = (i & 0xF0)>>4;
         uint8_t cmd[] = {SET_PAGE_ADDRESS+7-j,lsb,msb+0x10};
         LCD_writeCommand(cmd, 3);     
+	screen[i][j] = image[ind];
         LCD_writeData(image[ind]);      
         ind++;     
       }
     }
 
-
+    LCD_printf("hola");
+    return;
 }
 
 

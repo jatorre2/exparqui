@@ -13,3 +13,4 @@ int16_t LCD_printf(const char * fmt, ...);
 void LCD_draw_img();
 void LCD_adjust_contrast(uint8_t set);
 void LCD_reset_address();
+void LCD_println(const char * st);

@@ -7,6 +7,7 @@ void LCD_setAllPixels(uint8_t set);
 void LCD_writeData(uint8_t data);
 void LCD_clear(void);
 void LCD_setPixel(uint8_t i, uint8_t j,uint8_t set);
+uint8_t LCD_getPixel(uint8_t i, uint8_t j);
 void LCD_cleanpage(uint8_t page);
 int LCD_putchar(int character);
 int16_t LCD_printf(const char * fmt, ...);
