@@ -12,7 +12,7 @@ uint8_t accel_read(uint8_t address) {
 
     UCA0TXBUF = address;
 
-    while(UCA0STAT & UCBUSY);
+    while (!(UCA0IFG & UCRXIFG)) ;
 
     UCA0RXBUF;
     UCA0TXBUF = 0x00;

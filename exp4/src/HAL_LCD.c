@@ -319,7 +319,7 @@ void LCD_draw_img(){
       }
     }
 
-    LCD_printf("hola");
+    //LCD_printf("hola");
     return;
 }
 

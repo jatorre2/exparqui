@@ -49,7 +49,7 @@ uint8_t checkGoal(){
 
 
 void moveLeft(){
-  if(maze[start_i][start_j-1]==0){
+  if(maze[start_i][start_j-1]==0 && maze[start_i+1][start_j-1]==0){
     start_j--;
     LCD_setPixel(start_i  , start_j+2,0);
     LCD_setPixel(start_i+1, start_j+2,0);
@@ -59,7 +59,7 @@ void moveLeft(){
 }
 
 void moveRight(){
-  if(maze[start_i][start_j+2]==0){
+  if(maze[start_i][start_j+2]==0 && maze[start_i+1][start_j+2]==0 ){
     start_j++;
     LCD_setPixel(start_i  , start_j-1,0);
     LCD_setPixel(start_i+1, start_j-1,0);
@@ -69,14 +69,22 @@ void moveRight(){
 }
 
 void moveUp(){
-  if(maze[start_i-1][start_j]==0){
+  if(maze[start_i-1][start_j]==0 && maze[start_i-1][start_j+1]==0){
     start_i--;
+    LCD_setPixel(start_i+2, start_j,0);
+    LCD_setPixel(start_i+2, start_j+1,0);
+    LCD_setPixel(start_i, start_j,1);
+    LCD_setPixel(start_i, start_j+1,1);
   }  
 }
 
 void moveDown(){
-  if(maze[start_i+2][start_j]==0){
+  if(maze[start_i+2][start_j]==0 && maze[start_i+2][start_j+1]==0){
     start_i++;
+    LCD_setPixel(start_i-1, start_j,0);
+    LCD_setPixel(start_i-1, start_j+1,0);
+    LCD_setPixel(start_i, start_j,1);
+    LCD_setPixel(start_i, start_j+1,1);
   }  
 }
 

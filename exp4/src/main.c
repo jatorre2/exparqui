@@ -92,10 +92,10 @@ void app_run2(){
     while(1) {
 
         if(ACCEL_INT_OUT) {
-	    LCD_printf("chao");
-//            x = accel_read(0x06);
+	  //  LCD_printf("chao");
+            x = accel_read(0x06);
             __delay_cycles(100);
-  //          y = accel_read(0x07);
+            y = accel_read(0x07);
             __delay_cycles(100);
     //        z = accel_read(0x08);
             __delay_cycles(100);
