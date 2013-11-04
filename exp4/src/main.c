@@ -83,11 +83,12 @@ void app_run2(){
   accel_init(); 
   led_state(1,0);
   LCD_draw_img();
+  setMaze();
   __delay_cycles(2000);
   //LCD_printf("holaa");
   button_init();
-    int8_t x0=0, y0=0, z0=0;
-    int8_t x,y,z,xx,yy,zz;
+    int8_t x0=0, y0=0;
+    int8_t x,y,xx,yy;
 
     while(1) {
 
@@ -97,34 +98,37 @@ void app_run2(){
             __delay_cycles(100);
             y = accel_read(0x07);
             __delay_cycles(100);
-    //        z = accel_read(0x08);
-            __delay_cycles(100);
+          //  __delay_cycles(100);
 
             xx = x-x0;
             yy = y-y0;
-            zz = z-z0;
-
+            
            // LCD_reset_address();
            // LCD_printf("X: %d     \n\rY: %d     \n\rZ: %d    ", xx,yy,zz);
-            if(flag1) {
+            if(flag1 || x0==0) {
                 __delay_cycles(100);
-	            x0 = x;
+	        x0 = x;
                 y0 = y;
               //  z0 = z;
             }
 
-	    if(xx>20)
-		moveRight();
-	    if(xx<-20)
-		moveLeft();
-	    if(yy>20)
-		moveUp();
-	    if(yy<-20)
-		moveDown();
-	    if(abs(zz)>20)
-		led_state(3,1);
-	    else
-		led_state(3,0);
+	    if(xx>20){
+		//moveRight();
+		led_state(1,1);
+	    }else{led_state(1,0);}
+	    if(xx<-20){
+		//moveLeft();
+		led_state(1,1);
+	    }else{led_state(1,0);}
+	    if(yy>20){
+		//moveUp();
+		led_state(2,1);
+	    }else{led_state(2,0);}
+	    if(yy<-20){
+		//moveDown();
+		led_state(2,1);
+	    }else{led_state(2,0);}
+	    
 
 
 
@@ -137,14 +141,14 @@ void app_run2(){
 int main (void)
 {
 	init();
-	_NOP();
+	
 	led_init();
 	//timer_init();
 	//timer_start();
  	//pot_init();
     	//adc_init();
 	LCD_clear();
-	app_run2();
+	app_run();
 
 	//app_run2();
 
