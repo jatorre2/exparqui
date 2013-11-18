@@ -3,7 +3,7 @@
 
 #include <msp430.h>
 #include "HAL_LCD.h"
-#include "FontTable.h"
+//#include "FontTable.h"
 #include "output.h"
 
 // For all commands, CD signal must = 0
@@ -45,7 +45,7 @@
 //Globals 
 
 
-volatile uint8_t screen[8][102];
+uint8_t screen[8][102];
 uint8_t curr_page=0,curr_col=0;
 
 
@@ -189,19 +189,42 @@ void LCD_clear(void){
 //Enciende o apaga el pixel en la i-esima fila, j-esima columna
 //0<=i<=63, 0<=j<=101
 
-void LCD_setPixel(uint8_t i, uint8_t j,uint8_t set){
+uint8_t flip(uint8_t byte){
 
+  for(uint8_t i=0;i<=3;i++){
+    uint8_t bit1 = byte & (1<<i);
+    uint8_t bit2 = byte & (1<<(7-i));
+    if(bit1!=0){
+      byte|=(1<<(7-i));
+    }
+    else
+      byte&= ~(1<<(7-i));
+    
+    if(bit2!=0){
+      byte|=(1<<i);
+    }
+    else
+      byte&= ~(1<<i);   
+
+  }
+
+  return byte;
+}
+
+void LCD_setPixel(uint8_t i, uint8_t j,uint8_t set){
+i--;
     uint8_t lsb = (j & 0x0F);
     uint8_t msb = (j & 0xF0)>>4;
-    uint8_t p = 7-(i/8);
+    uint8_t p = (i/8);
     uint8_t bit = 7-(i%8);
 
-    uint8_t cmd[] = {SET_PAGE_ADDRESS+p,lsb,msb+0x10};
+    uint8_t cmd[] = {SET_PAGE_ADDRESS+7-p,lsb,msb+0x10};
 
     if(set==1)
 	screen[p][j]|=1<<bit;
     else
 	screen[p][j]&= ~(1<<bit);	 
+
 
     LCD_writeCommand(cmd, 3);    
     LCD_writeData(screen[p][j]); 
@@ -215,7 +238,7 @@ uint8_t LCD_getPixel(uint8_t i, uint8_t j){
     uint8_t bit = 7-(i%8);
 
 
-   if(screen[p][j] & 1<<bit)
+   if(flip(screen[p][j]) & (1<<bit))
 	return 1;
    else
 	return 0;
@@ -237,7 +260,7 @@ void LCD_cleanpage(uint8_t page){
 
 // Auxiliary function for LCD_printf, this one does all the work.
 int LCD_putchar(int character) {
-    character = (uint8_t) character;
+  /*  character = (uint8_t) character;
     // Handle the character
 
 
@@ -288,7 +311,7 @@ int LCD_putchar(int character) {
   else if(curr_page>=8){
     curr_page = 0;
   }
-
+*/
   return 0;
 
 }
@@ -313,8 +336,8 @@ void LCD_draw_img(){
         uint8_t msb = (i & 0xF0)>>4;
         uint8_t cmd[] = {SET_PAGE_ADDRESS+7-j,lsb,msb+0x10};
         LCD_writeCommand(cmd, 3);     
-	screen[i][j] = image[ind];
-        LCD_writeData(image[ind]);      
+	screen[j][i] = image[ind];
+        LCD_writeData(screen[j][i]);      
         ind++;     
       }
     }

@@ -45,6 +45,8 @@ __attribute__((critical)) int uart_putchar(int tx_byte)
 }
 
 volatile uint8_t flag_uart = 0;
+volatile uint8_t buffer[140];
+volatile uint8_t index = 0;
 
 #ifndef interrupt
 #define interrupt(x) void __attribute__((interrupt(x)))
@@ -54,7 +56,8 @@ interrupt(USCI_A1_VECTOR) USCI_A1_ISR(void)
 	if(UCA1IFG & UCRXIFG)
 	{
 		P1OUT ^= BIT0;
-		UCA1RXBUF;
+		if(index<139)
+			buffer[index++] = UCA1RXBUF;
 		flag_uart = 1;
 	}
 }

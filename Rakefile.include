@@ -18,8 +18,8 @@ mcu ||= "msp430f5529"
 
 #Setting the FLAGS for compile and link time. If using a different MSP430 be sure to change
 #the mmcu option
-cflags = "-mmcu=#{mcu} -mcpu=430x -c -fstack-check -O2 -Wall -std=c99 -fpack-struct -fdata-sections -ffunction-sections -g -fshort-enums "
-lflags = "-mmcu=#{mcu} -mcpu=430x -Os -Wl,--gc-sections"
+cflags = "-mmcu=#{mcu} -c -fstack-check -O2 -Wall -std=c99 -fpack-struct -fdata-sections -ffunction-sections -g -fshort-enums "
+lflags = "-mmcu=#{mcu} -O2 -Wl,--gc-sections"
 #cflags = "-mmcu=#{mcu} -mmemory-model=medium -mcpu=430x -c -fstack-check -Os -Wall -std=c99 -fpack-struct -fdata-sections -ffunction-sections -g "
 #lflags = "-mmcu=#{mcu} -mmemory-model=medium -mcpu=430x -Os -Wl,--gc-sections"
 

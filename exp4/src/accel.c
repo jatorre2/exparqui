@@ -17,7 +17,6 @@ uint8_t accel_read(uint8_t address) {
     UCA0RXBUF;
     UCA0TXBUF = 0x00;
 
-    uint16_t counter=0;
     while(UCA0STAT & UCBUSY);
     //while(! ACCEL_INT)
 

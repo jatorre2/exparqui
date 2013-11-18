@@ -8,9 +8,7 @@
 #include "HAL_LCD.h"
 #include "test.h"
 #include "led.h"
-#include "timer.h"
 #include "button.h"
-#include "adc.h"
 #include "accel.h"
 #include "maze.h"
 
@@ -83,29 +81,28 @@ void app_run2(){
   accel_init(); 
   led_state(1,0);
   LCD_draw_img();
+
+  //__delay_cycles(2000);
+  
   setMaze();
   __delay_cycles(2000);
-  //LCD_printf("holaa");
   button_init();
     int8_t x0=0, y0=0;
-    int8_t x,y,xx,yy;
-
-    while(1) {
-
-        if(ACCEL_INT_OUT) {
-	  //  LCD_printf("chao");
-            x = accel_read(0x06);
-            __delay_cycles(100);
+    int8_t x=0,y=0,xx=0,yy=0;
+  __delay_cycles(10000);
+    while(1) {          
+        if(ACCEL_INT_OUT || 1) {
+            __delay_cycles(10000);
+	    x = accel_read(0x06);
+            __delay_cycles(10000);
             y = accel_read(0x07);
-            __delay_cycles(100);
-          //  __delay_cycles(100);
 
             xx = x-x0;
             yy = y-y0;
             
            // LCD_reset_address();
            // LCD_printf("X: %d     \n\rY: %d     \n\rZ: %d    ", xx,yy,zz);
-            if(flag1 || x0==0) {
+            if(flag1) {
                 __delay_cycles(100);
 	        x0 = x;
                 y0 = y;
@@ -113,19 +110,19 @@ void app_run2(){
             }
 
 	    if(xx>20){
-		//moveRight();
+		moveLeft();
 		led_state(1,1);
 	    }else{led_state(1,0);}
 	    if(xx<-20){
-		//moveLeft();
+		moveRight();
 		led_state(1,1);
 	    }else{led_state(1,0);}
 	    if(yy>20){
-		//moveUp();
+		moveDown();
 		led_state(2,1);
 	    }else{led_state(2,0);}
 	    if(yy<-20){
-		//moveDown();
+		moveUp();
 		led_state(2,1);
 	    }else{led_state(2,0);}
 	    
@@ -141,14 +138,13 @@ void app_run2(){
 int main (void)
 {
 	init();
-	
 	led_init();
 	//timer_init();
 	//timer_start();
  	//pot_init();
     	//adc_init();
 	LCD_clear();
-	app_run();
+	app_run2();
 
 	//app_run2();
 

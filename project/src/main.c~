@@ -23,13 +23,15 @@ void init() {
 }
 
 extern volatile uint8_t flag_uart;
+extern volatile uint8_t buffer[140];
+extern volatile uint8_t index;
+
+uint8_t buffer_main[140];
 
 int main (void)
 {
 	init();
 	LCD_clear();
-	uint8_t n = 0;
-	uint8_t c = 1;
 	while(1) {
 		/*if(c==1) {
 			n=n+1;
@@ -46,8 +48,13 @@ int main (void)
 			DEBUG(".");
 		DEBUG("\n\r");*/
 		if(flag_uart){
-			LCD_cleanpage(0);
-			LCD_printf("%c",UCA1RXBUF);
+			__disable_interrupt();
+			buffer[index] = '\0';
+			memcpy(buffer_main,(void*)buffer,index);
+			index = 0;
+			__enable_interrupt();
+			LCD_printf("%s",buffer_main);
+			memset((void*)buffer_main,0,140);
 			flag_uart = 0;
 		}
 	}

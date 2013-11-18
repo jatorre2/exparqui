@@ -11,14 +11,14 @@ uint8_t accel_read(uint8_t address) {
     ACCEL_CS_OUT &= ~ACCEL_CS_BIT;
 
     UCA0TXBUF = address;
-uint16_t counter=0;
-    while (!(UCA0IFG & UCRXIFG)) {if(counter++>10000)break;};
+
+    while (!(UCA0IFG & UCRXIFG)) ;
 
     UCA0RXBUF;
     UCA0TXBUF = 0x00;
 
-    counter=0;
-    while(UCA0STAT & UCBUSY){if(counter++>10000)break;};
+    uint16_t counter=0;
+    while(UCA0STAT & UCBUSY);
     //while(! ACCEL_INT)
 
     result = UCA0RXBUF;

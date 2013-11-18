@@ -18,7 +18,7 @@ mcu ||= "msp430f5529"
 
 #Setting the FLAGS for compile and link time. If using a different MSP430 be sure to change
 #the mmcu option
-cflags = "-mmcu=#{mcu} -mcpu=430x -c -fstack-check -O2 -Wall -std=c99 -fpack-struct -fdata-sections -ffunction-sections -g -fshort-enums "
+cflags = "-mmcu=#{mcu} -mcpu=430x -c -fstack-check -Os -Wall -std=c99 -fpack-struct -fdata-sections -ffunction-sections -g -fshort-enums "
 lflags = "-mmcu=#{mcu} -mcpu=430x -Os -Wl,--gc-sections"
 #cflags = "-mmcu=#{mcu} -mmemory-model=medium -mcpu=430x -c -fstack-check -Os -Wall -std=c99 -fpack-struct -fdata-sections -ffunction-sections -g "
 #lflags = "-mmcu=#{mcu} -mmemory-model=medium -mcpu=430x -Os -Wl,--gc-sections"
@@ -58,8 +58,8 @@ task :build => :link
 desc "The default compiles and links"
 task :default => :link
 
-`gcc ex.c`
-`./a.out`
+#`gcc ex.c`
+#`./a.out`
 
 
 desc "Link the compiled objects into the binary"
@@ -88,7 +88,7 @@ task :install do
 	abort "Abort: #{bin_out} not found. Run 'rake' first" unless File.exists?(bin_out)
 	puts "Installing bin.ihex..."
 	#`./goodfet.bsl -c /dev/ttyUSB0 -r -e -I -S 38400 -P int_vec.txt -p bin.ihex`
-	`mspdebug rf2500 "prog bin.elf"`
+	`sudo mspdebug rf2500 "prog bin.elf"`
 	abort "Abort: Error installing #{bin_out}" unless $?.to_i == 0
 	puts "#{bin_out} succesfully installed!"
 end
