@@ -13,7 +13,7 @@ sp.parity = SerialPort::NONE
 head = "\r" + "="*17 + "   ESPN - News   " + "="*17 
 
 while true 
-	res = Net::HTTP.get_response URI.parse("http://api.espn.com/v1/now/?leagues=tennis&apikey=wj6bgffztf4apanxtvkzyacx")
+	res = Net::HTTP.get_response URI.parse("http://api.espn.com/v1/now/?leagues=tennis&apikey=[???]")
 
 	ob = JSON.parse(res.body)
 
